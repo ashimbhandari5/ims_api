@@ -5,6 +5,7 @@ export class CreateOrganizationDto {
     @IsNotEmpty()
     @IsString()
     name: string;
+    
     @IsNotEmpty()
     @IsEnum(OrganizationType)
     type: OrganizationType;
