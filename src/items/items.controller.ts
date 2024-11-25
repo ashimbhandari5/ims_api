@@ -35,13 +35,14 @@ export class ItemsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateItemDto: UpdateItemDto, 
+  update(@Param('id') id: string, @Body() updateItemDto: UpdateItemDto,
 @Req() request:ItemRequest) {
     return this.itemsService.update( +id,request.payload?.organization_id,updateItemDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.itemsService.remove(+id);
+  remove(@Param('id') id: string,
+@Req() request:ItemRequest) {
+    return this.itemsService.remove(+id,request.payload?.organization_id);
   }
 }

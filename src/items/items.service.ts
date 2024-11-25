@@ -1,8 +1,9 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { capitalizeFirstLetterOfEachWordInAPhrase } from 'src/helpers/capitalize';
+import { identity } from 'rxjs';
 
 
 
@@ -66,24 +67,36 @@ const item= await tx.item.upsert({
     });
   }
 
-  findOne(organization_id:number, id:number) {
-    return this.getItemById(id,organization_id);
+  findOne(organization_id:number, item_id:number) {
+    return this.getItemById(item_id,organization_id);
   }
 
-   async update(id: number,organization_id:number, updateItemDto: UpdateItemDto) {
-    await this.getItemById(id,organization_id)
+
+   async update(item_id: number,organization_id:number, updateItemDto: UpdateItemDto) {
+    const itemOrganization = await this.getItemById(item_id,organization_id)
     updateItemDto.name= capitalizeFirstLetterOfEachWordInAPhrase(updateItemDto.name)
-    
+    if(!await  this.checkIfItemExist(updateItemDto.name,item_id))
+    {
+      throw new BadRequestException(`item ${updateItemDto.name} with this name already exist`);
+    }
 
-    return this.prismaService.item.update({where:{id},data:updateItemDto});
+
+    return this.prismaService.item.update({
+      where:{
+        id:itemOrganization.item_id,},
+      data:updateItemDto
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} item`;
+
+ async remove(id: number,organization_id:number) {
+    await this.getItemById(id,organization_id);
+    return this.prismaService.itemOrganization.delete({where:{id}});
   }
 
 
   private async getItemById(id: number, organization_id:number) {
+
     const item = await this.prismaService.itemOrganization.findFirst({ where: {
       item_id:id ,
       organization_id : organization_id,
@@ -94,9 +107,22 @@ const item= await tx.item.upsert({
  });
 
     if (!item) {
-      throw new NotFoundException(`Role with id ${id} does not exist`);
+      throw new NotFoundException(`item with id ${id} does not exist`);
     }
 
     return item;
+  }
+
+
+  private async checkIfItemExist(name: string, id?: number): Promise<boolean> {
+    const item = await this.prismaService.item.findUnique({
+      where: { name, }
+    });
+
+    if (id) {
+      return item ? item.id === id : true;
+    }
+
+    return !!item;
   }
 }

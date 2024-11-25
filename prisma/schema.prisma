@@ -63,7 +63,7 @@ model Item{
    id Int  @id @default(autoincrement())
     name String @unique
     description String? @db.Text()
-    quantity Int @default(0)
+    quantity Int ?@default(0)
     price Float @default(0)
     discount Float @default(0)
   discount_type DiscountType @default(rate)
@@ -75,11 +75,10 @@ model Item{
 
 model ItemOrganization{
   @@map("item_organizations")
+  id Int @id() @default(autoincrement())
+
   item_id Int
   organization_id Int
-
-  @@id([item_id,organization_id])
-
 
   item Item @relation(fields: [item_id],references: [id] ,onDelete: Cascade)
   oraganizations Organization @relation(fields: [organization_id],references: [id],onDelete: Cascade)
