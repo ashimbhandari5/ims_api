@@ -1,0 +1,45 @@
+[
+  {
+    "id": 1,
+    "name": "Marker",
+    "description": "This is a description",
+    "quantity": 4,
+    "price": 30,
+    "discount": "10%"
+  },
+  {
+    "id": 2,
+    "name": "Duster",
+    "description": "",
+    "quantity": 4,
+    "price": 50
+  },
+  {
+    "id": 3,
+    "name": "Board",
+    "description": "",
+    "quantity": 10,
+    "price": 500
+  },
+  {
+    "id": 4,
+    "name": "Chair",
+    "description": "",
+    "quantity": 12,
+    "price": 1500
+  },
+  {
+    "id": 5,
+    "name": "Desk",
+    "description": "",
+    "quantity": 15,
+    "price": 2000
+  },
+  {
+    "id": 6,
+    "name": "Fan",
+    "description": "",
+    "quantity": 15,
+    "price": 3000
+  }
+]
